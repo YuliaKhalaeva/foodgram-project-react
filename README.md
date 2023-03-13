@@ -1,4 +1,4 @@
-# Foofgram
+# Foodgram
 
 ## Описание:<a class="anchor" id="about">
 [к оглавлению](#contents)
