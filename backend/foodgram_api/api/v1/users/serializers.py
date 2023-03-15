@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
+from recipes.models import Recipe
 
 from utils.calc import is_subscribed
 
@@ -27,3 +28,14 @@ class CustomUserSerializer(UserSerializer):
         if request_user.is_anonymous:
             return False
         return is_subscribed(self.context['request'].user, obj)
+
+
+class UserRecipeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Recipe
+        fields = ('id',
+                  'name',
+                  'image',
+                  'cooking_time'
+                  )

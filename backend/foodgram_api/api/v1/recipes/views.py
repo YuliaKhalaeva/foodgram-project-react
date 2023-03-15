@@ -2,8 +2,7 @@ import operator
 from functools import reduce
 
 from django.contrib.auth import get_user_model
-from django.db.models import Q, Sum
-from django.http import HttpResponse
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
@@ -14,17 +13,14 @@ from api.v1.filters import IngredientTypeFilter
 from api.v1.permissions import IsAuthorOrReadOnly
 from api.v1.recipes.serializers import (CustomUserSubscribeSerializer,
                                         IngredientTypeSerializer,
-                                        RecipeSerializer,
-                                        RecipeShortSerializer, TagSerializer)
+                                        RecipeSerializer, TagSerializer)
 from recipes.models import IngredientType, Recipe, Subscribe, Tag
 from utils.calc import is_subscribed
+from utils.fav_shop_cart import favorite_shopping_cart
 
 User = get_user_model()
 
 messages = {'unauthorized': 'User is not authorized',
-            'favorite_success': 'Recipe successfully added to favorite',
-            'favorite_fail': 'This recipe is already in favorite',
-            'unfavorite_fail': 'This recipe is not in favorite',
             'cant_subscribe_yourself': 'You couldnt be subscribe to yourself',
             'subscribed_already': 'You have alredy subscribed',
             'no_subscribe': 'You do not subsribe to this user',
@@ -78,51 +74,15 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, url_path='favorite',
             methods=['POST', 'DELETE'])
-    def favorite(self, request, pk):
-        recipe = get_object_or_404(Recipe, pk=pk)
-        current_user = request.user
-        if request.method == 'POST':
-            if not current_user.favorited.filter(pk=pk).exists():
-                current_user.favorited.add(recipe)
-                serializer = RecipeShortSerializer(recipe)
-                return Response(serializer.data, status.HTTP_201_CREATED)
-            return Response(get_error_context(messages['favorite_fail']),
-                            status.HTTP_400_BAD_REQUEST)
-        if current_user.favorited.filter(pk=pk).exists():
-            current_user.favorited.remove(recipe)
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response(get_error_context(messages['unfavorite_fail']),
-                        status.HTTP_400_BAD_REQUEST)
+    def favorite(self, request, *args, **kwargs):
+        recipe = get_object_or_404(Recipe, pk=self.kwargs['pk'])
+        return favorite_shopping_cart(request, Recipe.favorited_by, recipe)
 
-    @action(detail=False, url_path='download_shopping_cart', methods=['GET'],
-            permission_classes=(IsAuthenticated,))
-    def download_shopping_cart(self, request):
-        recipes = request.user.cart.all()
-        ingredients = IngredientType.objects.filter(
-            ingredient_amounts__recipe__in=recipes).annotate(
-                sum=Sum('ingredient_amounts__amount'))
-        text = '\n'.join([f'{p.name}, {p.sum} {p.measurement_unit.name}'
-                          for p in ingredients])
-        response = HttpResponse(text, content_type='text/plain')
-        response['Content-Disposition'] = 'attachment; filename=test.txt'
-        return response
-
-    @action(detail=True, url_path='shopping_cart', methods=['POST', 'DELETE'])
-    def shopping_cart(self, request, pk):
-        recipe = get_object_or_404(Recipe, pk=pk)
-        current_user = request.user
-        if request.method == 'POST':
-            if not current_user.cart.filter(pk=pk).exists():
-                current_user.cart.add(recipe)
-                serializer = RecipeShortSerializer(recipe)
-                return Response(serializer.data, status.HTTP_201_CREATED)
-            return Response(get_error_context(messages['in_cart_already']),
-                            status.HTTP_400_BAD_REQUEST)
-        if current_user.cart.filter(pk=pk).exists():
-            current_user.cart.remove(recipe)
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response(get_error_context(messages['not_in_cart']),
-                        status.HTTP_400_BAD_REQUEST)
+    @action(detail=True, url_path='shopping_cart',
+            methods=['POST', 'DELETE'])
+    def shopping_cart(self, request, *args, **kwargs):
+        recipe = get_object_or_404(Recipe, pk=self.kwargs['pk'])
+        return favorite_shopping_cart(request, Recipe.cart_of, recipe)
 
 
 class SubscriptionViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):

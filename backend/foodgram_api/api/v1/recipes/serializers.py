@@ -1,11 +1,14 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
-from rest_framework.exceptions import APIException
 from rest_framework.serializers import SerializerMethodField
 
 from api.v1.users.serializers import CustomUserSerializer
 from recipes.models import IngredientAmount, IngredientType, Recipe, Tag
-from utils.strings import str_to_file
+
+
+from .exeptions import RecipeError
+from .fields import Base64ImageField
+
 
 User = get_user_model()
 
@@ -13,10 +16,6 @@ messages = {'not_less_1': 'Amount can not be less than 1',
             'ingr_no_repeat': 'Ingredients can not repeat',
             'ingr_not_empty': 'Ingredients can not be empty',
             'tags_not_empty': 'Tags can not be empty'}
-
-
-class RecipeError(APIException):
-    status_code = 400
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -31,13 +30,6 @@ class IngredientTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = IngredientType
         fields = '__all__'
-
-
-class Base64ImageField(serializers.ImageField):
-    def to_internal_value(self, data):
-        if isinstance(data, str) and data.startswith('data:image'):
-            _, file = str_to_file(data)
-        return super().to_internal_value(file)
 
 
 class RecipeShortSerializer(serializers.ModelSerializer):
