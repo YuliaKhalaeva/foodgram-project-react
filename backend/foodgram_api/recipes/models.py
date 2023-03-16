@@ -1,3 +1,4 @@
+from colorfield.fields import ColorField
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
@@ -67,9 +68,10 @@ class Tag(models.Model):
             ),
         ]
     )
-    color = models.CharField(
+    color = ColorField(
         verbose_name='tag color',
         max_length=MAX_LENGTH_COLOR,
+        default="#ffffff"
     )
 
     class Meta:

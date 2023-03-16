@@ -3,7 +3,9 @@ from rest_framework import serializers
 from rest_framework.serializers import SerializerMethodField
 
 from api.v1.users.serializers import CustomUserSerializer
-from recipes.models import IngredientAmount, IngredientType, Recipe, Tag
+
+from recipes.models import (Tag, IngredientType, Recipe,
+                            Subscribe, IngredientAmount)
 
 
 from .exeptions import RecipeError
@@ -15,7 +17,8 @@ User = get_user_model()
 messages = {'not_less_1': 'Amount can not be less than 1',
             'ingr_no_repeat': 'Ingredients can not repeat',
             'ingr_not_empty': 'Ingredients can not be empty',
-            'tags_not_empty': 'Tags can not be empty'}
+            'tags_not_empty': 'Tags can not be empty',
+            'cant_subscribe_yourself': 'You couldnt be subscribe to yourself'}
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -157,3 +160,23 @@ class RecipeSerializer(serializers.ModelSerializer):
     def __make_tags(self, recipe, tags):
         for tag in tags:
             recipe.tags.add(tag)
+
+
+class SubscribeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        fields = '__all__'
+        model = Subscribe
+        validators = [
+            serializers.UniqueTogetherValidator(
+                queryset=Subscribe.objects.all(),
+                fields=['user', 'author']
+            )
+        ]
+
+    def validate_author(self, value):
+        if value == self.initial_data['user']:
+            raise serializers.ValidationError(
+                detail=messages['cant_subscribe_yourself']
+            )
+        return value
