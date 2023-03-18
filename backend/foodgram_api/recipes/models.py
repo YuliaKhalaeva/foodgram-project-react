@@ -112,17 +112,16 @@ class Recipe(models.Model):
         verbose_name='tags',
     )
     favorited_by = models.ManyToManyField(
-        User,
-        verbose_name='favorite',
-        related_name='favorited',
-        blank=True
-    )
+         User,
+         verbose_name='favorite',
+         related_name='favorited',
+         blank=True
+     )
     cart_of = models.ManyToManyField(
-        User, verbose_name='cart',
-        related_name='cart',
-        blank=True
-    )
-
+         User, verbose_name='cart',
+         related_name='cart',
+         blank=True
+     )
     image = models.ImageField(
         upload_to='recipes/images/',
     )
@@ -193,3 +192,56 @@ class Subscribe(models.Model):
 
     def __str__(self):
         return f'{self.user.username}, {self.author.username}'
+
+
+class Favorites(models.Model):
+    recipe = models.ForeignKey(
+        Recipe,
+        verbose_name='favorite recipes',
+        related_name='fav_recipe',
+        on_delete=models.CASCADE,
+    )
+    user = models.ForeignKey(
+        User,
+        verbose_name='user',
+        related_name='fav_user',
+        on_delete=models.CASCADE,
+    )
+
+    class Meta:
+        verbose_name = 'favorite recipe'
+        verbose_name_plural = 'favorite recipes'
+        constraints = (
+            models.UniqueConstraint(
+                fields=('recipe', 'user', ),
+                name='recipe_user_unique',
+            ),
+        )
+
+    def __str__(self) -> str:
+        return f'{self.user} -> {self.recipe}'
+
+
+class ShoppingCart(models.Model):
+    user = models.ForeignKey(
+        User,
+        verbose_name='user',
+        related_name='cart_user',
+        on_delete=models.CASCADE,
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        verbose_name='recipes',
+        related_name='cart_recipes',
+        on_delete=models.CASCADE,
+    )
+
+    class Meta:
+        verbose_name = 'shopping cart'
+        verbose_name_plural = 'shopping cart'
+        constraints = (
+            models.UniqueConstraint(
+                fields=('recipe', 'user', ),
+                name='recipe_user_cart_unique',
+            ),
+        )

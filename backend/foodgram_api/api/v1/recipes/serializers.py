@@ -4,7 +4,8 @@ from rest_framework.serializers import SerializerMethodField
 
 from api.v1.users.serializers import CustomUserSerializer
 
-from recipes.models import (Tag, IngredientType, Recipe,
+from recipes.models import (Favorites, Tag, IngredientType,
+                            Recipe, ShoppingCart,
                             Subscribe, IngredientAmount)
 
 
@@ -180,3 +181,40 @@ class SubscribeSerializer(serializers.ModelSerializer):
                 detail=messages['cant_subscribe_yourself']
             )
         return value
+
+
+class RecipeViewSerializer(serializers.ModelSerializer):
+    tags = TagSerializer(
+        many=True,
+        read_only=True,
+    )
+    author = CustomUserSerializer(
+        read_only=True,
+    )
+    ingredients = IngredientTypeSerializer(
+        source='recipeingredient_set',
+        many=True,
+        read_only=True,
+    )
+    image = Base64ImageField(required=True)
+    is_favorited = serializers.SerializerMethodField(read_only=True)
+    is_in_shopping_cart = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Recipe
+        fields = ('id', 'tags', 'author',
+                  'ingredients', 'name', 'image',
+                  'text', 'cooking_time', 'is_favorited',
+                  'is_in_shopping_cart')
+
+    def is_item_related(self, recipe, model):
+        request = self.context.get('request')
+        if not request or not request.user.is_authenticated:
+            return False
+        return model.objects.filter(user=request.user, recipe=recipe).exists()
+
+    def get_is_favorited(self, recipe):
+        return self.is_item_related(recipe, Favorites)
+
+    def get_is_in_shopping_cart(self, recipe):
+        return self.is_item_related(recipe, ShoppingCart)
