@@ -28,9 +28,9 @@ AUTH_USER_MODEL = 'users.CustomUser'
 SECRET_KEY = 'zkhyq1l7mr&(=8+6pwjxx97zq)p6m-b(4r2ds7qc9+v&&v6cd='
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1','51.250.16.171']
+ALLOWED_HOSTS = ['*', '51.250.16.171']
 
 
 # Application definition
@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_framework_simplejwt',
     'django_filters',
     'django_extensions',
     'djoser',
@@ -90,15 +91,14 @@ WSGI_APPLICATION = 'foodgram_api.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': os.getenv('DB_ENGINE'),
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('POSTGRES_USER'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT')
+        'ENGINE': os.getenv('DB_ENGINE', default='django.db.backends.postgresql'),
+        'NAME': os.getenv('DB_NAME', default='postgres'),
+        'USER': os.getenv('POSTGRES_USER', default='postgres'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', default='postgres'),
+        'HOST': os.getenv('DB_HOST', default='db'),
+        'PORT': os.getenv('DB_PORT', default=5432)
     }
 }
-
 
 
 # Password validation
