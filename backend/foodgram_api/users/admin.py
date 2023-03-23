@@ -83,3 +83,5 @@ class CustomUserAdmin(UserAdmin):
     get_subscribed_to.short_description = 'authors'
 
     inlines = (FavoritedInline, CartInline, SubscribeInline)
+
+admin.site.register(Subscribe)
