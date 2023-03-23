@@ -54,7 +54,7 @@ jobs:
     if: github.ref == 'refs/heads/master'
     steps:
       - name: executing remote ssh commands to deploy
-        uses: yuliakhalaeva/ssh-action@master
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
@@ -64,7 +64,7 @@ jobs:
           script: |
             sudo docker pull yuliakhalaeva/foodgram_api:latest
             sudo docker compose stop
-            sudo docker compose rm foodgram_api
+            sudo docker compose rm backend
             touch .env
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
             echo DB_NAME=${{ secrets.DB_NAME }} >> .env
