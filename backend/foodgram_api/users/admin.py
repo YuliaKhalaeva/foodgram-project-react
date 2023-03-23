@@ -84,4 +84,5 @@ class CustomUserAdmin(UserAdmin):
 
     inlines = (FavoritedInline, CartInline, SubscribeInline)
 
+
 admin.site.register(Subscribe)

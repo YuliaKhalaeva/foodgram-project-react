@@ -1,4 +1,6 @@
 # Foodgram
+![my badge](https://github.com/YuliaKhalaeva/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg) </p>
+[admin panel](http://51.250.16.171/)<p></p>
 
 ## Описание:<a class="anchor" id="about">
 [к оглавлению](#contents)
@@ -17,7 +19,7 @@
 - Python
 - Django
 - DRF
-- SQLite3
+- PostgreSQL
 
 ## Установка:<a class="anchor" id="setup">
 [к оглавлению](#contents)
@@ -27,40 +29,37 @@
 ```
 git clone git@github.com:YuliaKhalaeva/foodgram-project-react.git
 ```
-
+Cоздайте .env файл и впишите:
 ```
-cd foodgram-project-react
-```
-
-Cоздать и активировать виртуальное окружение:
-
-```
-python3 -m venv venv
-```
-
-```
-source venv/bin/activate
+DB_ENGINE=<django.db.backends.postgresql>
+DB_NAME=<имя базы данных postgres>
+DB_USER=<пользователь бд>
+DB_PASSWORD=<пароль>
+DB_HOST=<db>
+DB_PORT=<5432>
+SECRET_KEY=<секретный ключ проекта django>
 ```
 
-Установить зависимости из файла requirements.txt:
+Соберите docker-compose:
 
 ```
-python3 -m pip install --upgrade pip
+docker-compose up -d --build
+```
+После успешной сборки выполните команды (только после первого деплоя):
+```
+docker-compose exec backend python manage.py collectstatic --noinput
+```
+
+Примените миграции:
+
+```
+docker-compose exec backend python manage.py migrate --noinput
 ```
 
 ```
-pip install -r requirements.txt
+Создать суперпользователя Django:
 ```
 
-Выполнить миграции:
+docker-compose exec backend python manage.py createsuperuser
 
 ```
-python3 manage.py migrate
-```
-
-Запустить проект:
-
-```
-python3 manage.py runserver
-```
-

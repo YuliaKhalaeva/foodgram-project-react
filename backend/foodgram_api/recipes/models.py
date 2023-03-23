@@ -27,7 +27,7 @@ class Measure(models.Model):
 
 
 class IngredientType(models.Model):
-   name = models.CharField(
+    name = models.CharField(
         verbose_name='name', max_length=MAX_LENGTH,
         db_index=True,
     )
