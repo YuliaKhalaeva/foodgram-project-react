@@ -121,7 +121,7 @@ class Recipe(models.Model):
         User, verbose_name='cart',
         related_name='cart',
         blank=True
-     )
+    )
     image = models.ImageField(
         upload_to='recipes/images/',
     )
