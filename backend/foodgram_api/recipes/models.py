@@ -112,15 +112,15 @@ class Recipe(models.Model):
         verbose_name='tags',
     )
     favorited_by = models.ManyToManyField(
-         User,
-         verbose_name='favorite',
-         related_name='favorited',
-         blank=True
+        User,
+        verbose_name='favorite',
+        related_name='favorited',
+        blank=True
      )
     cart_of = models.ManyToManyField(
-         User, verbose_name='cart',
-         related_name='cart',
-         blank=True
+        User, verbose_name='cart',
+        related_name='cart',
+        blank=True
      )
     image = models.ImageField(
         upload_to='recipes/images/',
