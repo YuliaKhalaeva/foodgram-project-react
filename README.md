@@ -1,6 +1,6 @@
 # Foodgram
 ![my badge](https://github.com/YuliaKhalaeva/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg) </p>
-[admin panel](http://51.250.16.171/)<p></p>
+[foodgram доступен по ссылке](http://51.250.16.171/)<p></p>
 
 ## Описание:<a class="anchor" id="about">
 [к оглавлению](#contents)
