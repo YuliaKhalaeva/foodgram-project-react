@@ -116,7 +116,7 @@ class Recipe(models.Model):
         verbose_name='favorite',
         related_name='favorited',
         blank=True
-     )
+    )
     cart_of = models.ManyToManyField(
         User, verbose_name='cart',
         related_name='cart',
