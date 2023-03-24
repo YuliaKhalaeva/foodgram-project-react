@@ -7,8 +7,4 @@ drf-yasg~=1.21.5
 Pillow~=9.4.0
 python-dotenv==0.20.0
 django-extensions
-gunicorn==20.0.4
-psycopg2-binary==2.8.6
-PyJWT==2.1.0
-pytz
-sqlparse==0.3.1 
+
