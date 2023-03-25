@@ -4,6 +4,10 @@
 [/admin доступен по ссылке](http://158.160.26.246/admin/)<p></p>
 [документация доступна по ссылке](http://158.160.26.246/api/docs/redoc.html)<p></p>
 
+* /admin email : yulia@foodgram.ru
+* /admin username : yulia
+* /admin password : 1
+
 
 
 ## Описание:<a class="anchor" id="about">
