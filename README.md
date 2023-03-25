@@ -50,22 +50,27 @@ SECRET_KEY=<секретный ключ проекта django>
 
 Соберите docker-compose:
 ```
+  
 docker-compose up -d --build
 ```
 После успешной сборки выполните команды (только после первого деплоя):
 ```
+  
 docker-compose exec backend python manage.py collectstatic --noinput
 ```
 Примените миграции:
 ```
+  
 docker-compose exec backend python manage.py migrate --noinput
 ```
 ```
 Создать суперпользователя Django:
 ```
+  
 docker-compose exec backend python manage.py createsuperuser
 ```
 Заполнение БД  
 ```
+  
 sudo docker-compose exec backend python manage.py load_tags
 ```
