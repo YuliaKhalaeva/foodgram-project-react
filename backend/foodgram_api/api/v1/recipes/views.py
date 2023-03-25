@@ -17,7 +17,7 @@ from api.v1.recipes.serializers import (CustomUserSubscribeSerializer,
                                         RecipeShortSerializer,
                                         RecipeViewSerializer,
                                         TagSerializer, SubscribeSerializer)
-from recipes.models import (Favorites, IngredientType, Recipe,
+from recipes.models import (Favorites, Ingredient, Recipe,
                             ShoppingCart, Subscribe, Tag)
 
 
@@ -30,11 +30,11 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
 
 
-class IngredientTypeViewSet(viewsets.ReadOnlyModelViewSet):
+class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = None
     serializer_class = IngredientTypeSerializer
-    queryset = IngredientType.objects.all()
-    filter_backends = (IngredientTypeFilter,)
+    queryset = Ingredient.objects.all()
+    filter_backends = (IngredientFilter,)
     search_fields = ('^name',)
 
 
