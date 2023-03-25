@@ -72,6 +72,7 @@ docker-compose exec backend python manage.py createsuperuser
 
 ```
 Заполнение БД  
+  
 ```
 sudo docker-compose exec backend python manage.py load_tags
 ```
