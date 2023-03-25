@@ -71,3 +71,6 @@ docker-compose exec backend python manage.py migrate --noinput
 docker-compose exec backend python manage.py createsuperuser
 
 ```
+Заполнение БД  
+```
+sudo docker-compose exec backend python manage.py load_tags
