@@ -96,7 +96,7 @@ class Recipe(models.Model):
         verbose_name='author'
     )
     ingredient_types = models.ManyToManyField(
-        IngredientType,
+        Ingredient,
         verbose_name='type of ingredient',
         through='IngredientAmount'
     )
@@ -139,7 +139,7 @@ class Recipe(models.Model):
 
 class IngredientAmount(models.Model):
     ingredient = models.ForeignKey(
-        IngredientType,
+        Ingredient,
         on_delete=models.PROTECT,
         related_name='ingredient_amounts',
         verbose_name='ingredient type'

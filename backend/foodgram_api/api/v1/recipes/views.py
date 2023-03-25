@@ -10,7 +10,7 @@ from rest_framework.permissions import (IsAuthenticated,
 from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED, HTTP_204_NO_CONTENT
 
-from api.v1.filters import IngredientTypeFilter, RecipeFilter
+from api.v1.filters import IngredientFilter, RecipeFilter
 from api.v1.recipes.serializers import (CustomUserSubscribeSerializer,
                                         IngredientTypeSerializer,
                                         RecipeSerializer,
@@ -84,7 +84,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['GET'])
     def download_shopping_cart(self, request):
-        ingredients = IngredientType.objects.filter(
+        ingredients = Ingredient.objects.filter(
             recipe__cart_recipes__user=request.user
         ).order_by('ingredient__name').values(
             'ingredient__name', 'ingredient__measurement_unit'

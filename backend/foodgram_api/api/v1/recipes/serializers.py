@@ -32,7 +32,7 @@ class IngredientTypeSerializer(serializers.ModelSerializer):
     measurement_unit = serializers.StringRelatedField(read_only=True)
 
     class Meta:
-        model = IngredientType
+        model = Ingredient
         fields = '__all__'
 
 
