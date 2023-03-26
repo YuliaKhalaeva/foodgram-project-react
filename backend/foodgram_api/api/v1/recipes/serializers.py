@@ -4,7 +4,7 @@ from rest_framework.serializers import SerializerMethodField
 
 from api.v1.users.serializers import CustomUserSerializer
 
-from recipes.models import (Favorites, Tag, IngredientType,
+from recipes.models import (Favorites, Tag, Ingredient,
                             Recipe, ShoppingCart,
                             Subscribe, IngredientAmount)
 
@@ -32,7 +32,7 @@ class IngredientTypeSerializer(serializers.ModelSerializer):
     measurement_unit = serializers.StringRelatedField(read_only=True)
 
     class Meta:
-        model = IngredientType
+        model = Ingredient
         fields = '__all__'
 
 
@@ -44,13 +44,13 @@ class RecipeShortSerializer(serializers.ModelSerializer):
 
 class IngredientAmountSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(
-        source='ingredient.pk', queryset=IngredientType.objects.all())
+        source='ingredient.pk', queryset=Ingredient.objects.all())
     name = serializers.PrimaryKeyRelatedField(
-        source='ingredient.name', queryset=IngredientType.objects.all(),
+        source='ingredient.name', queryset=Ingredient.objects.all(),
         required=False)
     measurement_unit = serializers.PrimaryKeyRelatedField(
         source='ingredient.measurement_unit.name',
-        queryset=IngredientType.objects.all(), required=False)
+        queryset=Ingredient.objects.all(), required=False)
 
     class Meta:
         model = IngredientAmount

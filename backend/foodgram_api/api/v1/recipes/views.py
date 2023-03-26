@@ -10,14 +10,14 @@ from rest_framework.permissions import (IsAuthenticated,
 from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED, HTTP_204_NO_CONTENT
 
-from api.v1.filters import IngredientTypeFilter, RecipeFilter
+from api.v1.filters import IngredientFilter, RecipeFilter
 from api.v1.recipes.serializers import (CustomUserSubscribeSerializer,
                                         IngredientTypeSerializer,
                                         RecipeSerializer,
                                         RecipeShortSerializer,
                                         RecipeViewSerializer,
                                         TagSerializer, SubscribeSerializer)
-from recipes.models import (Favorites, IngredientType, Recipe,
+from recipes.models import (Favorites, Ingredient, Recipe,
                             ShoppingCart, Subscribe, Tag)
 
 
@@ -30,11 +30,11 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
 
 
-class IngredientTypeViewSet(viewsets.ReadOnlyModelViewSet):
+class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = None
     serializer_class = IngredientTypeSerializer
-    queryset = IngredientType.objects.all()
-    filter_backends = (IngredientTypeFilter,)
+    queryset = Ingredient.objects.all()
+    filter_backends = (IngredientFilter,)
     search_fields = ('^name',)
 
 
@@ -84,7 +84,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['GET'])
     def download_shopping_cart(self, request):
-        ingredients = IngredientType.objects.filter(
+        ingredients = Ingredient.objects.filter(
             recipe__cart_recipes__user=request.user
         ).order_by('ingredient__name').values(
             'ingredient__name', 'ingredient__measurement_unit'
