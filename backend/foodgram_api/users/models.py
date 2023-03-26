@@ -1,7 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from foodgram_api import settings
+from foodgram import settings
 
 
 class User(AbstractUser):
@@ -13,8 +13,8 @@ class User(AbstractUser):
     ]
     email = models.EmailField(max_length=254, unique=True)
     username = models.CharField(max_length=150, unique=True)
-    first_name = models.CharField(max_length=150, verbose_name='Name')
-    last_name = models.CharField(max_length=150, verbose_name='Surname')
+    first_name = models.CharField(max_length=150, verbose_name='Имя')
+    last_name = models.CharField(max_length=150, verbose_name='Фамилия')
     role = models.CharField(
         max_length=10,
         choices=USER_ROLES,
@@ -36,7 +36,7 @@ class User(AbstractUser):
         return self.username
 
 
-class Subscribe(models.Model):
+class Follow(models.Model):
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -45,15 +45,15 @@ class Subscribe(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name='subscriber',
+        related_name='follower',
     )
 
     class Meta:
-        verbose_name = 'Favorite author'
-        verbose_name_plural = 'Favorite authors'
+        verbose_name = 'Избранные авторы'
+        verbose_name_plural = 'Избранные авторы'
 
         constraints = [
             models.UniqueConstraint(
-                fields=['user', 'author'], name='unique_subscribe_users'
+                fields=['user', 'author'], name='unique_follow_users'
             )
         ]

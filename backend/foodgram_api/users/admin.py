@@ -1,6 +1,7 @@
+
 from django.contrib import admin
 
-from .models import Subscribe, User
+from .models import Follow, User
 
 
 class UserAdmin(admin.ModelAdmin):
@@ -22,10 +23,10 @@ class UserAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
 
 
-class SubscribeAdmin(admin.ModelAdmin):
+class FollowAdmin(admin.ModelAdmin):
     list_display = ('pk', 'author', 'user')
     empty_value_display = '-пусто-'
 
 
 admin.site.register(User, UserAdmin)
-admin.site.register(Subscribe, SubscribeAdmin)
+admin.site.register(Follow, FollowAdmin)

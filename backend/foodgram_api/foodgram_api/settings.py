@@ -28,13 +28,13 @@ AUTH_USER_MODEL = 'users.CustomUser'
 SECRET_KEY = 'zkhyq1l7mr&(=8+6pwjxx97zq)p6m-b(4r2ds7qc9+v&&v6cd='
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'users.apps.UsersConfig',
-    'recipes.apps.RecipesConfig',
+    'recipe.apps.RecipesConfig',
     'api.apps.ApiConfig',
     'django.contrib.admin',
     'django.contrib.auth',

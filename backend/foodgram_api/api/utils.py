@@ -10,7 +10,7 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 
 FILE_NAME = 'Shopping_cart.pdf'
-TITLE = 'Shopping cart'
+TITLE = 'Список покупок'
 
 
 def pdf(data: Dict[int, Dict[str, Union[str, int]]]) -> FileResponse:

@@ -4,12 +4,11 @@ from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
-from recipes.models import (Favorite, Ingredient,
-                            IngredientInRecipe, Recipe, Tag)
-from users.models import Subscribe, User
+from recipe.models import Favorite, Ingredient, IngredientInRecipe, Recipe, Tag
+from users.models import Follow, User
 
 
-class FoodgramUserCreateSerializer(UserCreateSerializer):
+class FoodUserCreateSerializer(UserCreateSerializer):
     email = serializers.EmailField(
         validators=[UniqueValidator(queryset=User.objects.all())]
     )
@@ -32,7 +31,7 @@ class FoodUserSerializer(UserSerializer):
 
     def get_is_subscribed(self, obj):
         user = self.context.get('request').user
-        return not user.is_anonymous and Subscribe.objects.filter(
+        return not user.is_anonymous and Follow.objects.filter(
             author_id=obj.id, user_id=user.id
         ).exists()
 
@@ -110,31 +109,31 @@ class RecipeSerializer(serializers.ModelSerializer):
             if type(amount) is str:
                 if not amount.isdigit():
                     raise serializers.ValidationError(
-                        ('Amount must be a number')
+                        ('Количество ингредиента должно быть числом')
                     )
             if int(amount) < 1:
                 raise serializers.ValidationError(
-                    ('Min number 1')
+                    ('Минимальное количество ингридиентов 1')
                 )
             if type(data['cooking_time']) is str:
                 if not ingredient.get('cooking_time').isdigit():
                     raise serializers.ValidationError(
-                        ('Time of cooking must be in minutes')
+                        ('Количество минут должно быть числом')
                     )
             if int(data['cooking_time']) <= 0:
                 raise serializers.ValidationError(
-                    'Time of cooking must be > 0 '
+                    'Время готовки должно быть > 0 '
                 )
             ingredient_id = ingredient.get('id')
             if ingredient_id in ingredient_list:
                 raise serializers.ValidationError(
-                    'Ingredients must be unique.'
+                    'Ингредиент не должен повторяться.'
                 )
             ingredient_list.append(ingredient_id)
         tags = self.initial_data.get('tags')
         if not tags:
             raise serializers.ValidationError({
-                'tags': 'You must choose tag'
+                'tags': 'Нужно выбрать хотя бы один тэг!'
             })
         data['ingredients'] = ingredients
         data['tags'] = tags
@@ -171,7 +170,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
 
-class SubscribeSerializer(serializers.ModelSerializer):
+class FollowSerializer(serializers.ModelSerializer):
     recipes = serializers.SerializerMethodField()
     is_subscribed = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()
@@ -191,7 +190,7 @@ class SubscribeSerializer(serializers.ModelSerializer):
 
     def get_is_subscribed(self, obj):
         user = self.context.get('request').user
-        return not user.is_anonymous and Subscribe.objects.filter(
+        return not user.is_anonymous and Follow.objects.filter(
             author_id=obj.id, user_id=user.id
         ).exists()
 

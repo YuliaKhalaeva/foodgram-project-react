@@ -10,31 +10,29 @@ from rest_framework.response import Response
 from api.filters import IngredientFilter, RecipeFilter
 from api.paginations import PagePagination
 from api.permissions import IsAuthor
-from api.serializers import (FavoriteSerializer, SubscribeSerializer,
-                             FoodgramUserCreateSerializer,
-                             IngredientSerializer,
+from api.serializers import (FavoriteSerializer, FollowSerializer,
+                             FoodUserSerializer, IngredientSerializer,
                              RecipeSerializer, TagSerializer)
 from api.utils import pdf
-from recipes.models import (Favorite, Ingredient,
-                            IngredientInRecipe, Recipe, Tag)
-from users.models import Subscribe, User
+from recipe.models import Favorite, Ingredient, IngredientInRecipe, Recipe, Tag
+from users.models import Follow, User
 
 
-class FoodgramUserViewSet(UserViewSet):
-    serializer_class = FoodgramUserCreateSerializer
+class FoodUserViewSet(UserViewSet):
+    serializer_class = FoodUserSerializer
     queryset = User.objects.all()
     pagination_class = PagePagination
 
     @action(detail=False, permission_classes=[IsAuthenticated])
     def subscriptions(self, request):
-        author_ids = Subscribe.objects.filter(
+        author_ids = Follow.objects.filter(
             user_id=self.request.user.id
         ).values_list('author', flat=True)
         data = self.filter_queryset(
             User.objects.filter(id__in=author_ids).all()
         )
         page = self.paginate_queryset(data)
-        serializer = SubscribeSerializer(
+        serializer = FollowSerializer(
             page, context={'request': request}, many=True
         )
         return self.get_paginated_response(serializer.data)
@@ -53,7 +51,7 @@ class FoodgramUserViewSet(UserViewSet):
                     {'errors': 'Вы не можете подписываться на самого себя'},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-            if Subscribe.objects.filter(
+            if Follow.objects.filter(
                 author_id=author.id, user_id=self.request.user.id
             ).exists():
                 return Response(
@@ -61,10 +59,10 @@ class FoodgramUserViewSet(UserViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            Subscribe.objects.create(
+            Follow.objects.create(
                 author_id=author.id, user_id=self.request.user.id
             )
-            serializer = SubscribeSerializer(author, context={'request': request})
+            serializer = FollowSerializer(author, context={'request': request})
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         if request.method == 'DELETE':
             if self.request.user.id == author:
@@ -72,7 +70,7 @@ class FoodgramUserViewSet(UserViewSet):
                     {'errors': 'Вы не можете отписываться от самого себя'},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-            follow = Subscribe.objects.filter(
+            follow = Follow.objects.filter(
                 author_id=author.id, user_id=self.request.user.id
             )
             if follow.exists():
