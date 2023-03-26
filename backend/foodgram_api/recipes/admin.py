@@ -1,31 +1,54 @@
 from django.contrib import admin
 
-from .models import Subscribe, User
+from .models import Favorite, Ingredient, IngredientInRecipe, Recipe, Tag
 
 
-class UserAdmin(admin.ModelAdmin):
-    fields = [
-        'email',
-        'password',
-        'role',
-        'username',
-        'first_name',
-        'last_name',
-    ]
+class IngredientAdmin(admin.ModelAdmin):
+    list_display = ('pk', 'name', 'measurement_unit')
+    search_fields = ('name',)
+    empty_value_display = '-empty-'
+
+
+class IngredientInRecipeAdmin(admin.ModelAdmin):
+    autocomplete_fields = ('recipe', 'ingredient')
+    list_display = ('amount',)
+    list_filter = ('ingredient',)
+    empty_value_display = '-empty-'
+
+
+class RecipeAdmin(admin.ModelAdmin):
+    fields = ('author', 'name', 'text', 'tags', 'image', 'cooking_time')
     list_display = (
         'pk',
-        'username',
-        'email',
-        'password',
+        'name',
+        'text',
+        'image',
+        'cooking_time',
+        'author',
+        'favorite',
     )
-    search_fields = ('username', 'email')
-    empty_value_display = '-пусто-'
+    search_fields = ('name',)
+    empty_value_display = '-empty-'
+
+    def in_favorite(self, obj):
+        return obj.favorite.all().count()
 
 
-class FollowAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'author', 'user')
-    empty_value_display = '-пусто-'
+class TagAdmin(admin.ModelAdmin):
+    list_display = ('pk', 'name', 'slug', 'color')
+    search_fields = ('name',)
+    list_filter = ('slug',)
+    empty_value_display = '-empty-'
 
 
-admin.site.register(User, UserAdmin)
-admin.site.register(Subscribe, FollowAdmin)
+class FavoriteAdmin(admin.ModelAdmin):
+    autocomplete_fields = ('recipe',)
+    list_display = ('pk', 'user', 'shopping_cart', 'favorite')
+    empty_value_display = '-empty-'
+
+
+admin.site.register(Tag, TagAdmin)
+admin.site.register(Ingredient, IngredientAdmin)
+admin.site.register(Recipe, RecipeAdmin)
+admin.site.register(IngredientInRecipe, IngredientInRecipeAdmin)
+admin.site.register(Favorite, FavoriteAdmin)

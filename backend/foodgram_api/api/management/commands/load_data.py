@@ -3,13 +3,13 @@ import os
 
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
-from recipes.models import IngredientType
+from recipes.models import Ingredient
 
 DATA_ROOT = os.path.join(settings.BASE_DIR, 'data')
 
 
 class Command(BaseCommand):
-    help = 'Загрузка данных в базу данных'
+    help = 'load data'
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -22,9 +22,9 @@ class Command(BaseCommand):
                       'r', encoding='utf-8',) as f:
                 data = json.load(f)
                 for ingredient in data:
-                    IngredientType.objects.update_or_create(
+                    Ingredient.objects.update_or_create(
                         name=ingredient['name'],
                         measurement_unit=ingredient['measurement_unit'],
                     )
         except FileNotFoundError:
-            raise CommandError('Возникла ошибка')
+            raise CommandError('error')
