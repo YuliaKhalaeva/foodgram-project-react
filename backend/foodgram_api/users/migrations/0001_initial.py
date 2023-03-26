@@ -28,8 +28,8 @@ class Migration(migrations.Migration):
                 ('date_joined', models.DateTimeField(default=django.utils.timezone.now, verbose_name='date joined')),
                 ('email', models.EmailField(max_length=254, unique=True)),
                 ('username', models.CharField(max_length=150, unique=True)),
-                ('first_name', models.CharField(max_length=150, verbose_name='Имя')),
-                ('last_name', models.CharField(max_length=150, verbose_name='Фамилия')),
+                ('first_name', models.CharField(max_length=150, verbose_name='Name')),
+                ('last_name', models.CharField(max_length=150, verbose_name='Surname')),
                 ('role', models.CharField(choices=[('admin', 'Admin role'), ('user', 'User role')], default='user', max_length=10)),
                 ('groups', models.ManyToManyField(blank=True, help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.', related_name='user_set', related_query_name='user', to='auth.Group', verbose_name='groups')),
                 ('user_permissions', models.ManyToManyField(blank=True, help_text='Specific permissions for this user.', related_name='user_set', related_query_name='user', to='auth.Permission', verbose_name='user permissions')),
@@ -49,12 +49,12 @@ class Migration(migrations.Migration):
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='subscriber', to=settings.AUTH_USER_MODEL)),
             ],
             options={
-                'verbose_name': 'Favorite authors',
-                'verbose_name_plural': 'Favorites authors',
+                'verbose_name': 'Favorite author',
+                'verbose_name_plural': 'Favorite authors',
             },
         ),
         migrations.AddConstraint(
-            model_name='follow',
+            model_name='Subscribe',
             constraint=models.UniqueConstraint(fields=('user', 'author'), name='unique_subscribe_users'),
         ),
     ]

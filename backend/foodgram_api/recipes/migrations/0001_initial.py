@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 'verbose_name': 'Favorite',
-                'verbose_name_plural': 'Favorite',
+                'verbose_name_plural': 'Favorites',
                 'ordering': ['-id'],
             },
         ),
@@ -32,7 +32,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=200, verbose_name='Name')),
-                ('measurement_unit', models.CharField(max_length=200, verbose_name='Measurement unit')),
+                ('Measurement_unit', models.CharField(max_length=200, verbose_name='Measurement unit')),
             ],
             options={
                 'verbose_name': 'Ingredient',
@@ -45,7 +45,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('amount', models.PositiveSmallIntegerField(default=1, validators=[django.core.validators.MinValueValidator(1, message='Min tome of cooking - 1 min')], verbose_name='Ingredient amount')),
-                ('ingredient', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='ingredient_in_recipe', to='recipe.Ingredient', verbose_name='ingredient')),
+                ('ingredient', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='ingredient_in_recipe', to='recipes.Ingredient', verbose_name='ingredient')),
             ],
             options={
                 'verbose_name': 'Add ingredient in recipe',
@@ -58,7 +58,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=200, unique=True, verbose_name='Name')),
-                ('color', models.CharField(max_length=200, unique=True, verbose_name='Colour')),
+                ('color', models.CharField(max_length=200, unique=True, verbose_name='Color')),
                 ('slug', models.SlugField(max_length=200, unique=True)),
             ],
             options={
@@ -77,7 +77,7 @@ class Migration(migrations.Migration):
                 ('cooking_time', models.PositiveSmallIntegerField(validators=[django.core.validators.MinValueValidator(1, message='Min tome of cooking - 1 min')], verbose_name='Time of cooking')),
                 ('pub_date', models.DateTimeField(auto_now_add=True, db_index=True, verbose_name='Date')),
                 ('author', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='recipes', to=settings.AUTH_USER_MODEL, verbose_name='Author')),
-                ('ingredients', models.ManyToManyField(related_name='recipes', through='recipe.IngredientInRecipe', to='recipe.Ingredient')),
+                ('ingredients', models.ManyToManyField(related_name='recipes', through='recipe.IngredientInRecipe', to='recipes.Ingredient')),
                 ('tags', models.ManyToManyField(related_name='recipes', to='recipe.Tag', verbose_name='tags')),
             ],
             options={
@@ -87,22 +87,22 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.AddField(
-            model_name='ingredientinrecipe',
+            model_name='Ingredientinrecipe',
             name='recipe',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='ingredient_in_recipe', to='recipe.Recipe'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='ingredient_in_recipe', to='recipes.Recipe'),
         ),
         migrations.AddConstraint(
-            model_name='ingredient',
+            model_name='Ingredient',
             constraint=models.UniqueConstraint(fields=('name', 'measurement_unit'), name='unique ingredient'),
         ),
         migrations.AddField(
-            model_name='favorite',
+            model_name='Favorite',
             name='recipe',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='favorite', to='recipe.Recipe', verbose_name='Рецепт'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='favorite', to='recipes.Recipe', verbose_name='Recipe'),
         ),
         migrations.AddField(
-            model_name='favorite',
+            model_name='Favorite',
             name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='favorite', to=settings.AUTH_USER_MODEL, verbose_name='Пользователь'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='favorite', to=settings.AUTH_USER_MODEL, verbose_name='User'),
         ),
     ]
