@@ -1,43 +1,32 @@
-import django_filters
-from django_filters.rest_framework import filters
-from recipe.models import Ingredient, Recipe, Tag
-from users.models import User
+from django_filters.rest_framework import FilterSet, filters
+from rest_framework.filters import SearchFilter
+
+from recipe.models import Recipe
 
 
-class RecipeFilter(django_filters.FilterSet):
-    author = filters.ModelChoiceFilter(queryset=User.objects.all())
-    tags = filters.ModelMultipleChoiceFilter(
-        field_name='tags__slug',
-        to_field_name='slug',
-        queryset=Tag.objects.all(),
-    )
-    is_favorited = filters.BooleanFilter(
-        field_name='favorite__favorite', method='filter_favorite'
-    )
+class IngredientSearchFilter(SearchFilter):
+    search_param = 'name'
+
+
+class RecipeFilter(FilterSet):
+    # tags = filters.AllValuesMultipleFilter(
+    #     field_name='tags__slug',
+    # )
+    is_favorited = filters.BooleanFilter(method='filter_is_favorited')
     is_in_shopping_cart = filters.BooleanFilter(
-        field_name='favorite__shopping_cart', method='filter_favorite'
+        method='filter_is_in_shopping_cart'
     )
 
     class Meta:
         model = Recipe
-        fields = ['author', 'tags']
+        fields = ('tags', 'author', 'is_favorited', 'is_in_shopping_cart')
 
-    def filter_favorite(self, queryset, name, value):
+    def filter_is_favorited(self, queryset, name, value):
         if value:
-            return queryset.filter(
-                favorite__user=self.request.user, **{name: True}
-            ).all()
+            return queryset.filter(favorite__user=self.request.user)
+        return queryset
 
-        return queryset.exclude(
-            favorite__user=self.request.user, **{name: True}
-        ).all()
-
-
-class IngredientFilter(django_filters.FilterSet):
-    name = django_filters.CharFilter(
-        field_name='name', lookup_expr='istartswith'
-    )
-
-    class Meta:
-        model = Ingredient
-        fields = ['name']
+    def filter_is_in_shopping_cart(self, queryset, name, value):
+        if value:
+            return queryset.filter(cart__user=self.request.user)
+        return queryset

@@ -6,27 +6,29 @@ load_dotenv()
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-SECRET_KEY = 'p&l%385148kslhtyn^##a1)ilz@4zqj=rq&agdol^##zgl9(vs'
+SECRET_KEY = os.getenv(
+    'SECRET_KEY',
+    default='p&l%385148kslhtyn^##a1)ilz@4zqj=rq&agdol^##zgl9(vs'
+)
 
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
-    'users.apps.UsersConfig',
-    'recipe.apps.RecipeConfig',
-    'api.apps.ApiConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
-    'rest_framework.authtoken',
-    'colorfield',
-    'djoser',
     'django_filters',
+    'rest_framework',
+    'djoser',
+    'rest_framework.authtoken',
+    'api.apps.ApiConfig',
+    'recipe.apps.RecipeConfig',
+    'users.apps.UsersConfig',
 ]
 
 MIDDLEWARE = [
@@ -41,11 +43,10 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'foodgram.urls'
 
-TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [TEMPLATES_DIR],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -60,14 +61,18 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'foodgram.wsgi.application'
 
+
 DATABASES = {
     'default': {
-        'ENGINE': os.getenv('DB_ENGINE', default='django.db.backends.sqlite3'),
-        'NAME': os.getenv('DB_NAME', default='db.sqlite3'),
-        'USER': os.getenv('POSTGRES_USER', default=''),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD', default=''),
-        'HOST': os.getenv('DB_HOST', default=''),
-        'PORT': os.getenv('DB_PORT', default='')
+        'ENGINE': os.getenv(
+            'DB_ENGINE',
+            default='django.db.backends.postgresql'
+        ),
+        'NAME': os.getenv('DB_NAME', default='postgres'),
+        'USER': os.getenv('POSTGRES_USER', default='postgres'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', default='postgres'),
+        'HOST': os.getenv('DB_HOST', default='db'),
+        'PORT': os.getenv('DB_PORT', default='5432')
     }
 }
 
@@ -86,47 +91,52 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LANGUAGE_CODE = 'ru-Ru'
+LANGUAGE_CODE = 'ru-RU'
 
-TIME_ZONE = 'Europe/Moscow'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_URL = '/backend_static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'backend_static')
 
-MEDIA_URL = '/media/'
-
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/backend_media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'backend_media')
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.TokenAuthentication',
-    ),
-    'DEFAULT_FILTER_BACKENDS': [
-        'django_filters.rest_framework.DjangoFilterBackend'],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+        'rest_framework.permissions.IsAuthenticated',
     ],
+
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 5,
 }
 
-AUTH_USER_MODEL = 'users.User'
 
 DJOSER = {
-    'LOGIN_FIELD': 'email',
+    "LOGIN_FIELD": 'email',
+    "SEND_ACTIVATION_EMAIL": False,
     'HIDE_USERS': False,
-    'SERIALIZERS': {
-        'user_create': 'api.serializers.FoodUserCreateSerializer',
-        'user': 'api.serializers.FoodUserSerializer',
-        'current_user': 'api.serializers.FoodUserSerializer',
+    "SERIALIZERS": {
+        "user_create": "users.serializers.CustomUserCreateSerializer",
+        "user": "users.serializers.CustomUserSerializer",
+        "current_user": "users.serializers.CustomUserSerializer",
     },
     'PERMISSIONS': {
-        'user': ('rest_framework.permissions.IsAuthenticated',),
-        'user_list': ('rest_framework.permissions.AllowAny',)
-    }
+        'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
+        'user_list': ['rest_framework.permissions.AllowAny']
+    },
 }
+
+
+AUTH_USER_MODEL = 'users.User'
