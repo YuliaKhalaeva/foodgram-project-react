@@ -46,8 +46,8 @@ jobs:
         with:
           push: true
           context: ./backend/foodgram_api
-          file: ./backend/foodgram_api/Dockerfile
-          tags: yuliakhalaeva/foodgram_api:latest
+          file: ./backend/Dockerfile
+          tags: yuliakhalaeva/foodgram:latest
   deploy:
     runs-on: ubuntu-latest
     needs: build_and_push_to_docker_hub
