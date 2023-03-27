@@ -45,7 +45,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          context: ./backend/foodgram_api
+          context: ./backend
           file: ./backend/Dockerfile
           tags: yuliakhalaeva/foodgram:latest
   deploy:
@@ -71,8 +71,8 @@ jobs:
           echo DB_HOST=${{ secrets.DB_HOST }} >> .env
           echo DB_PORT=${{ secrets.DB_PORT }} >> .env
           sudo docker-compose up -d
-          sudo docker run --platform linux/amd64 yuliakhalaeva/foodgram_api:latest date
-          sudo docker run --platform linux/amd64 yuliakhalaeva/foodgram_front:v1.0 date
+          sudo docker run --platform linux/amd64 yuliakhalaeva/foodgram:latest date
+          sudo docker run --platform linux/amd64 yuliakhalaeva/foodgram_frontend:latest date
   
   send_message:
     runs-on: ubuntu-latest
