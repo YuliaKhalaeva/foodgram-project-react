@@ -24,7 +24,7 @@ services:
       - ./.env
 
   frontend:
-    image: fyuliakhlaeva/foodgram_frontend:latest
+    image: yuliakhalaeva/foodgram_frontend:latest
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:
