@@ -37,40 +37,51 @@
 ```
 git clone git@github.com:YuliaKhalaeva/foodgram-project-react.git
 ```
-Cоздайте .env файл и впишите:
+* Cоздать файл `.env` в директории `/infra/` с содержанием:
+
 ```
-DB_ENGINE=<django.db.backends.postgresql>
-DB_NAME=<имя базы данных postgres>
-DB_USER=<пользователь бд>
-DB_PASSWORD=<пароль>
-DB_HOST=<db>
-DB_PORT=<5432>
-SECRET_KEY=<секретный ключ проекта django>
+SECRET_KEY=секретный ключ django
+DB_ENGINE=django.db.backends.postgresql
+DB_NAME=postgres
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+DB_HOST=db
+DB_PORT=5432
 ```
 
-Соберите docker-compose:
+* Перейти в директирию backend, обновить менеджер пакетов и установить зависимости из файла requirements.txt:
+
+```bash
+cd backend/
 ```
-  
-docker-compose up -d --build
+
+```bash
+python -m pip install --upgrade pip
 ```
-После успешной сборки выполните команды (только после первого деплоя):
+
+```bash
+pip install -r requirements.txt
 ```
-  
-docker-compose exec backend python manage.py collectstatic --noinput
+
+* Выполнить миграции:
+
+```bash
+python manage.py migrate
 ```
-Примените миграции:
+
+* Загрузить ингридиенты и теги:
+
+```bash
+python manage.py load_ingrs
 ```
-  
-docker-compose exec backend python manage.py migrate --noinput
+
+```bash
+python manage.py load_tags
 ```
+
+* Собрать статику:
+
+```bash
+python manage.py collectstatic --noinput
 ```
-Создать суперпользователя Django:
-```
-  
-docker-compose exec backend python manage.py createsuperuser
-```
-Заполнение БД  
-```
-  
-sudo docker-compose exec backend python manage.py load_tags
-```
+
