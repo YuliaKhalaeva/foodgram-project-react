@@ -11,7 +11,7 @@ services:
       - ./.env
 
   backend:
-    image: yuliakhalaeva/foodgram:latest
+    image: yuliakhalaeva/backend_media:latest
     expose:
       - 8000
     restart: always

@@ -194,6 +194,17 @@ class ShoppingSerializer(serializers.ModelSerializer):
         model = Shopping
         fields = ('user', 'recipe')
 
+    def validate(self, data):
+        request = self.context.get('request')
+        if not request or request.user.is_anonymous:
+            return False
+        recipe = data['recipe']
+        if Shopping.objects.filter(user=request.user, recipe=recipe).exists():
+            raise serializers.ValidationError({
+                'status': 'Рецепт уже есть в списке!'
+            })
+        return data
+
     def to_representation(self, instance):
         request = self.context.get('request')
         context = {'request': request}
