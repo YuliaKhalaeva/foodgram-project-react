@@ -11,7 +11,7 @@ services:
       - ./.env
 
   backend:
-    image: yuliakhalaeva/backend_media:latest
+    image: yuliakhalaeva/backend:latest
     expose:
       - 8000
     restart: always
