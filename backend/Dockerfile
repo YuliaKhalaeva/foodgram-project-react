@@ -1,8 +1,6 @@
 FROM python:3.7-slim
 
-RUN mkdir /app
-
-WORKDIR /app
+RUN apt update && apt -y install libpq-dev build-essential
 
 WORKDIR /app
 
