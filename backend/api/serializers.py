@@ -39,7 +39,8 @@ class CustomUserSerializer(UserSerializer):
 
     def get_is_subscribed(self, obj):
         user = self.context.get('request').user
-        return user.is_authenticated and obj.following.filter(user=user).exists()
+        return (user.is_authenticated and 
+                obj.following.filter(user=user).exists())
 
     def validate_user(self, value):
         user = self.context.get('request').user
@@ -361,7 +362,6 @@ class RecipeManipulationSerializer(serializers.ModelSerializer):
         self.create_ingredients(recipe, ingredients)
         instance.save()
         return instance
-
 
     def to_representation(self, instance):
         return RecipeListRetrieveSerializer(
